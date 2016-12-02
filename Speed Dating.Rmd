@@ -1,0 +1,11 @@
+---
+title: "Speed Dating"
+author: "Rafael Pardo"
+date: "2 December 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+dating <- read.csv("Speed Dating Data.csv")
+```
+
