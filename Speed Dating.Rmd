@@ -8,5 +8,9 @@ output: html_document
 ```{r setup, include=FALSE}
 dating <- read.csv("Speed Dating Data.csv")
 View(dating)
+roster <- dating[1:25,]
+survey <- dating[26:100,]
+library(dplyr)
+
 ```
 
