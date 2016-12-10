@@ -1,0 +1,62 @@
+---
+title: "Final Project"
+author: "Jackie Berndtson"
+date: "December 8, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+datingdata <- read.csv("Speed Dating Data.csv")
+attach(datingdata)
+
+miss <- c()
+for(i in 1:ncol(datingdata)) {
+  if(length(which(is.na(datingdata[,i]))) > 0.2*nrow(datingdata)) miss <- append(miss,i) 
+}
+#data2 is with columns less than 20% NAs
+data2 <- datingdata[,-miss]
+
+#logistic regression over 109 variables - step back to eliminate insignificant 
+
+data2$tuition <- as.numeric(data2$tuition)
+data2$income <- as.numeric(data2$income)
+data2$age_o <- as.numeric(data2$age_o)
+data2$age <- as.numeric(data2$age)
+data2$int_corr <- as.numeric(data2$int_corr)
+
+data2$active <- cbind(sports + exercise + hiking + yoga)
+data2$culture <- cbind(dining + museums + art + reading + theater + shopping)
+data2$home <- cbind(gaming + tv + movies + tvsports)
+data2$out <- cbind(clubbing + concerts + music)
+
+data2$active <- as.numeric(data2$active)
+data2$culture <- as.numeric(data2$culture)
+data2$home <- as.numeric(data2$home)
+data2$out <- as.numeric(data2$out)
+
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+
+data2$active["active"] <- as.data.frame(lapply(data2$active["active"], normalize))
+data2$active["active"] <- as.data.frame(lapply(data2$active["active"], normalize))
+data2$active <- (lapply(data2$active, scale))
+data2$culture <- as.data.frame(lapply(data2$culture, scale))
+data2$home <- as.data.frame(lapply(data2$home, scale))
+data2$out <- as.data.frame(lapply(data2$out, scale))
+
+library(lmtest)
+
+demog <- glm(match ~ gender + int_corr + samerace + age_o+ race_o+ age+ tuition+race+income + field_cd, data = data2)
+summary(demog)
+
+subjective <- glm(match ~ int_corr + pf_o_att + pf_o_sin + pf_o_int + pf_o_fun + pf_o_amb + pf_o_sha + imprace + imprelig + goal + date + go_out + career_c + exphappy + expnum + active + culture + home + out, data = data2)
+summary(subjective)
+
+combined <- glm(match ~ gender + int_corr + age_o + age + income + imprace + date + go_out + expnum + culture + out, data = data2)
+summary(combined)
+
+```
+#
+
